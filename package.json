@@ -1,0 +1,16 @@
+{
+  "name": "google-drive-upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "upload": "node ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "moment": "^2.29.1"
+  }
+}
