@@ -81,6 +81,7 @@ function uploadFile(auth) {
     try {
         var fileMetadata = {
             name: FileName,
+            //parents: ['Drive Folder ID where you want to upload the file']
             parents: ['1ONgTwttjjX-93Z1XdICLBeSEVJeR-0N7']
         };
 
@@ -91,8 +92,7 @@ function uploadFile(auth) {
         drive.files.create({
             resource: fileMetadata,
             media: media,
-            fields: 'id',
-            fjfel: ""
+            fields: 'id'
         }, function (err, file) {
             if (err) {
                 //rename the file
