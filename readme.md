@@ -14,6 +14,10 @@ create a google cloud console project, enable drive api, setup oauth consent scr
 
 >> setp 5: from next time it will upload your files form backups folder
 
+>> run the bash script in crontab at every minute
+```
+* * * * * bash /home/milon27/application/node-drive/script.sh
+```
 
 ___
 
