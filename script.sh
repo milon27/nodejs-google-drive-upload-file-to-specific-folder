@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-
+cd "$(dirname "$0")"
 #run as sudo
 DB_NAME='gql_ecom'
 
