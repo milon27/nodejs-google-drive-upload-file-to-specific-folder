@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 #run as sudo
 DB_NAME='gql_ecom'
 
