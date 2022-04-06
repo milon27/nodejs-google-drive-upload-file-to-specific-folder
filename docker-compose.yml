@@ -1,0 +1,13 @@
+version: '3.4'
+services:
+  node_drive:
+    container_name: node_drive
+    image: milon27/node_drive
+    build: .
+    environment:
+      - BACKUP_FILE_NAME=backup.txt
+      - BACKUP_FILE_MIMETYPE=text/css
+      - DRIVE_FOLDER_ID=1jG_b_FPTU7ZafNbmLlmY-z1GLOIZqeue
+      - CREDENTIAL_FILE_NAME=credentials.json
+    volumes:
+      - ./local_config:/app/config

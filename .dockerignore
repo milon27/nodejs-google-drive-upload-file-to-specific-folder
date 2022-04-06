@@ -1,0 +1,13 @@
+config/
+backups/
+failed/
+node_modules/
+.dockerignore
+.env
+.gitignore
+credentials.demo.json
+credentials.json
+Dockerfile
+readme.md
+token.json
+docker-compose.yml
