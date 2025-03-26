@@ -1,6 +1,7 @@
+require('dotenv').config();
 const fs = require('fs');
 const readline = require('readline');
-const moment = require('moment')
+const moment = require('moment');
 
 const { google } = require('googleapis');
 
@@ -9,17 +10,17 @@ const SCOPES = ['https://www.googleapis.com/auth/drive'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = 'token.json';
+const TOKEN_PATH = `${process.env.CONFIG_PATH}/${process.env.TOKEN_FILE_NAME}`;
 
-// Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
+// 1. Load client secrets from a local file.
+fs.readFile(`${process.env.CONFIG_PATH}/${process.env.CREDENTIAL_FILE_NAME}`, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
     authorize(JSON.parse(content), uploadFile);
 });
 
 /**
- * Create an OAuth2 client with the given credentials, and then execute the
+ * 2. Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
@@ -69,20 +70,19 @@ function getAccessToken(oAuth2Client, callback) {
 }
 
 function uploadFile(auth) {
-    const path = 'backups/backup.sql.gz'
-    const MimeType = 'application/gzip'
+    const path = `${process.env.CONFIG_PATH}/${process.env.BACKUP_FILE_NAME}`;
+    const MimeType = `${process.env.BACKUP_FILE_MIMETYPE}`;
     //application/octet-stream for sql
     //application/x-tar for .tar
     //application/gzip for .gz
     const drive = google.drive({ version: 'v3', auth });
-    const date = moment().format('DD-MM-YYYY-HH:mm:ss');
-    const FileName = date + '-mm.sql.gz'
-
+    const date = moment().format('DD-MM-YYYY-HH-mm-ss');
+    const FileName = (date + '-' + path.substring(path.lastIndexOf('/') + 1)).toString()
     try {
         var fileMetadata = {
             name: FileName,
             //parents: ['Drive Folder ID where you want to upload the file']
-            parents: ['1ONgTwttjjX-93Z1XdICLBeSEVJeR-0N7']
+            parents: [`${process.env.DRIVE_FOLDER_ID}`]
         };
 
         var media = {
@@ -96,45 +96,21 @@ function uploadFile(auth) {
         }, function (err, file) {
             if (err) {
                 //rename the file
-                fs.renameSync(path, `failed/${FileName}`)
+                fs.renameSync(path, `${process.env.CONFIG_PATH}/${FileName}`)
                 // Handle error
                 console.error('error while uplaoding file', err);
             } else {
                 console.log('Success File : ', file.data.id);
-                //delete the local file
+                //delete the local file after upload
                 fs.unlinkSync(path)
             }
         });
     } catch (e) {
-        //rename the file
-        fs.renameSync(path, `failed/${FileName}`)
-        // Handle error
+        //filed file store on this dir.
+        fs.renameSync(path, `${process.env.CONFIG_PATH}/${FileName}`)
+        // log the error
         console.error('error while uplaoding file try/catch-> ', e);
     }
 
-
-}
-
-/**
- * Lists the names and IDs of up to 10 files.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function listFiles(auth) {
-    const drive = google.drive({ version: 'v3', auth });
-    drive.files.list({
-        pageSize: 10,
-        fields: 'nextPageToken, files(id, name)',
-    }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const files = res.data.files;
-        if (files.length) {
-            console.log('Files:');
-            files.map((file) => {
-                console.log(`${file.name} (${file.id})`);
-            });
-        } else {
-            console.log('No files found.');
-        }
-    });
 }
 
